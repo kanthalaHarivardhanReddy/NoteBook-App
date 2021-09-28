@@ -4,15 +4,13 @@ const express=require('express');
 connectToMongo();
 
 const app=express();
-const port=3000;
+app.use(express.json());
+const port=5000;
 
 app.get('/',(req,res)=>{
-    let a={
-        ball:"stumper",
-        bat:"kukaboora"
-    }
-    res.send(a);
+    res.send("This is a Home page");
 })
+app.use('/auth',require('./routes/auth'));
 
 app.listen(port,(req,res)=>{
     console.log(`this app is running at https://localhost:${port}/`);
