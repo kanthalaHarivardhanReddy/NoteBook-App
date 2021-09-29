@@ -13,5 +13,5 @@ app.get('/',(req,res)=>{
 app.use('/auth',require('./routes/auth'));
 
 app.listen(port,(req,res)=>{
-    console.log(`this app is running at https://localhost:${port}/`);
+    console.log(`this app is running at https://localhost:${port}`);
 })
