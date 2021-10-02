@@ -6,8 +6,12 @@ const bcrypt=require('bcryptjs');
 const jwt=require('jsonwebtoken');
 const fetchuser=require('../middleware/fetchuser');
 
+//secret key of the web token
 const JWT_KEY="HEISAGOOD$BOYFORNOW";
+
+//route 1 : for creating a user : POST '/auth/createuser'
 router.post('/createuser',[
+    //for validating the inputs using express validator
     body('name','Enter a Valid Name').isLength({min:3}),
     body('email','Enter a Valid Email').isEmail(),
     body('password','Password must be atleast 5 characters').isLength({min:5})
@@ -19,11 +23,13 @@ router.post('/createuser',[
         }
         //finding if a user already exists
         let user=await User.findOne({email:req.body.email});
+
         //creating a user 
         if(user){
             return res.status(400).send('Enter a valid credentials');
         }
         const salt=await bcrypt.genSalt(10);
+        //hashing the password using salt 
         const secrPass=await bcrypt.hash(req.body.password,salt);
         user=await User.create({
             name:req.body.name,
@@ -35,14 +41,18 @@ router.post('/createuser',[
                 id:user.id
             }
         }
+
+        //signing a token using secret key
         const authtoken=jwt.sign(data,JWT_KEY);
         res.send({authtoken});
     }catch(err){
-        res.status(500).send('Internal Server Error')
+        res.status(500).send('Internal Server Error');
     }
 });
 
+//route 2 : for logging in the user : POST '/auth/login'
 router.post('/login',[
+    //for validating the inputs using express validator
     body('email','Enter a Valid Email').isEmail(),
     body('password','Password must be atleast 5 characters').isLength({min:5})
 ],async (req,res)=>{
@@ -80,10 +90,12 @@ router.post('/login',[
     }   
 });
 
+//route 3 : for fetching the details of a user : POST '/auth/getuser'
 router.post('/getuser',fetchuser,
 async (req,res)=>{
     try{
         userId= req.user.id;
+        //find the user with the user id 
         const user=await User.findById(userId).select("-password");
         res.send(user);
     }catch(err){
