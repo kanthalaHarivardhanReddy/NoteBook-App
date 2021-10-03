@@ -8,7 +8,7 @@ const Notes=require('../models/Notes');
 //route 1 : for fetching the notes of a user : GET '/notes/getnotes'
 //login required
 router.get('/getnotes',fetchuser,async (req,res)=>{
-    const notes=await Notes.findOne({user:req.user.id});
+    const notes=await Notes.find({user:req.user.id});
     res.send(notes);
 });
 
