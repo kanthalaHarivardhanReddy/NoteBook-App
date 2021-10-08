@@ -15,5 +15,5 @@ app.use('/auth',require('./routes/auth'));
 app.use('/notes',require('./routes/notes'));
 
 app.listen(port,(req,res)=>{
-    console.log(`this app is running at https://localhost:${port}`);
+    console.log(`this app is running at http://localhost:${port}`);
 });
