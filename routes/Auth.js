@@ -18,15 +18,16 @@ router.post('/createuser',[
 ],async (req,res)=>{
     try{
         const errors=validationResult(req);
+        let success=false;
         if(!errors.isEmpty()){
-            return res.status(400).json({errors:errors.array()});
+            return res.status(400).json({success,errors:errors.array()});
         }
         //finding if a user already exists
         let user=await User.findOne({email:req.body.email});
 
         //creating a user 
         if(user){
-            return res.status(400).send('Enter a valid credentials');
+            return res.status(400).send({success,msg:'Enter a valid credentials'});
         }
         const salt=await bcrypt.genSalt(10);
         //hashing the password using salt 
@@ -44,7 +45,9 @@ router.post('/createuser',[
 
         //signing a token using secret key
         const authtoken=jwt.sign(data,JWT_KEY);
-        res.send({authtoken});
+        success=true;
+        res.send({success,authtoken});
+
     }catch(err){
         res.status(500).send('Internal Server Error');
     }
@@ -58,8 +61,9 @@ router.post('/login',[
 ],async (req,res)=>{
     try{
         const errors=validationResult(req);
+        let success=false;
         if(!errors.isEmpty()){
-            return res.status(400).json({errors:errors.array()});
+            return res.status(400).json({success,errors:errors.array()});
         }
         //finding if a user already exists
         const {email,password}=req.body;
@@ -67,7 +71,7 @@ router.post('/login',[
         console.log(user);
 
         if(user===null){
-            return res.status(400).send('User not yet registered! please register first');
+            return res.status(400).send({success,msg:'User not yet registered! please register first'});
         }
         const login=await bcrypt.compare(password,user.password);
         if(login){
@@ -78,15 +82,16 @@ router.post('/login',[
                 }
             }
             const authtoken=jwt.sign(data,JWT_KEY);
-            res.send({authtoken});
+            success=true;
+            res.send({success,authtoken});
         }
         else{
             console.log("login failed");
-            return res.status(400).send('Enter a valid credentials');
+            return res.status(400).send({success,msg:'Enter a valid credentials'});
         }
         
     }catch(err){
-        res.status(500).send('Internal Server Error'+err.msg)
+        res.status(500).send('Internal Server Error'+err)
     }   
 });
 
