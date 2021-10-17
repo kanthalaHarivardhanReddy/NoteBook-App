@@ -7,7 +7,7 @@ const jwt=require('jsonwebtoken');
 const fetchuser=require('../middleware/fetchuser');
 
 //secret key of the web token
-const JWT_KEY="HEISAGOOD$BOYFORNOW";
+const JWT_KEY=process.env.SECRET_KEY;
 
 //route 1 : for creating a user : POST '/auth/createuser'
 router.post('/createuser',[
@@ -49,7 +49,9 @@ router.post('/createuser',[
         res.send({success,authtoken});
 
     }catch(err){
+        console.log(err);
         res.status(500).send('Internal Server Error');
+
     }
 });
 
@@ -98,7 +100,7 @@ router.post('/login',[
 //route 3 : for fetching the details of a user : POST '/auth/getuser'
 router.post('/getuser',fetchuser,
 async (req,res)=>{
-    try{
+    try{ 
         userId= req.user.id;
         //find the user with the user id 
         const user=await User.findById(userId).select("-password");

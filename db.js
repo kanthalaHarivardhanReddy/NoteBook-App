@@ -1,11 +1,19 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 
-const mongoURI="mongodb://localhost:27017/Notebook?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
+//connect to mongo DB atlas
+const mongoURI=process.env.DATABASE;
 
 const connectToMongo=()=>{
-    mongoose.connect(mongoURI,()=>{
-        console.log("Successfully connected to mongo");
-    })
+    // mongoose.connect(mongoURI).then(()=>{
+    //     console.log("Connection Successfull");
+    // }).catch((err)=>{console.log(err)});
+    mongoose.connect(mongoURI,
+        err => {
+            if(err) throw err;
+            console.log('connected to MongoDB')
+        });
 };
+
+
 
 module.exports=connectToMongo;
